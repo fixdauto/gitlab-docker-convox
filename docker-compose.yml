@@ -1,0 +1,25 @@
+web:
+  labels:
+    - convox.port.443.protocol=https
+    - convox.port.22.protocol=tls
+  image: 'gitlab/gitlab-ce:latest'
+  restart: always
+  hostname: 'git.fixdapp.com'
+  environment:
+    GITLAB_OMNIBUS_CONFIG: |
+      external_url 'https://git.fixdapp.com'
+      nginx['listen_port'] = 80
+      nginx['listen_https'] = false
+      nginx['proxy_set_headers'] = {
+        "X-Forwarded-Proto" => "https",
+        "X-Forwarded-Ssl" => "on"
+      }
+      # Add any other gitlab.rb configuration here, each on its own line
+  ports:
+    - '80:80'
+    - '443:443'
+    - '22:22'
+  volumes:
+    - /etc/gitlab
+    - /var/log/gitlab
+    - /var/opt/gitlab
