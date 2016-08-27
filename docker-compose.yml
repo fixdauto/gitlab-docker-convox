@@ -27,7 +27,7 @@ web:
       redis['enable'] = false
       gitlab_rails['redis_host'] = ENV['REDIS_HOST']
       gitlab_rails['redis_port'] = ENV['REDIS_PORT']
-      gitlab_rails['redis_password'] = ENV['REDIS_PASSWORD']
+      gitlab_rails['redis_password'] = ENV['REDIS_PASSWORD'].nil? || ENV['REDIS_PASSWORD'].empty? ? nil : ENV['REDIS_PASSWORD']
   ports:
     - '80:80'
     - '443:80'
