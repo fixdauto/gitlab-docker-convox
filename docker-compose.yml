@@ -4,18 +4,14 @@ web:
     - convox.port.22.protocol=tls
   image: 'gitlab/gitlab-ce:latest'
   restart: always
-  hostname: 'git.fixdapp.com'
   environment:
+    EXTERNAL_URL: https://convox.local
     GITLAB_OMNIBUS_CONFIG: |
-      external_url 'https://git.fixdapp.com'
+      external_url ENV['EXTERNAL_URL']
       unicorn['port'] = 8080
-      # nginx['enable'] = false
       nginx['listen_port'] = 80
       nginx['listen_https'] = false
-      # nginx['proxy_set_headers'] = {
-      #   "X-Forwarded-Proto" => "https",
-      #   "X-Forwarded-Ssl" => "on"
-      # }
+      ### DATABASE ###
       postgresql['enable'] = false
       gitlab_rails['db_adapter'] = 'postgresql'
       gitlab_rails['db_encoding'] = 'utf8'
@@ -24,10 +20,20 @@ web:
       gitlab_rails['db_port'] = ENV['POSTGRES_PORT']
       gitlab_rails['db_username'] = ENV['POSTGRES_USERNAME']
       gitlab_rails['db_password'] = ENV['POSTGRES_PASSWORD']
+      ### REDIS ###
       redis['enable'] = false
       gitlab_rails['redis_host'] = ENV['REDIS_HOST']
       gitlab_rails['redis_port'] = ENV['REDIS_PORT']
       gitlab_rails['redis_password'] = ENV['REDIS_PASSWORD'].nil? || ENV['REDIS_PASSWORD'].empty? ? nil : ENV['REDIS_PASSWORD']
+      ### MAIL ###
+      gitlab_rails['smtp_enable'] = true
+      gitlab_rails['smtp_address'] = ENV['SMTP_HOST']
+      gitlab_rails['smtp_port'] = ENV['SMTP_PORT']
+      gitlab_rails['smtp_user_name'] = ENV['SMTP_USERNAME']
+      gitlab_rails['smtp_password'] = ENV['SMTP_PASSWORD']
+      gitlab_rails['smtp_authentication'] = ENV['SMTP_AUTHENTICATION']
+      gitlab_rails['smtp_enable_starttls_auto'] = ENV['SMTP_ENABLE_STARTTLS_AUTO']
+      gitlab_rails['gitlab_email_from'] = ENV['SMTP_EMAIL_FROM']
   ports:
     - '80:80'
     - '443:80'
