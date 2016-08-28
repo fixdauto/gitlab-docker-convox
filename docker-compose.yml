@@ -1,7 +1,7 @@
 web:
   labels:
     - convox.port.443.protocol=https
-    - convox.port.22.protocol=tls
+    - convox.port.22.protocol=tcp
   image: 'gitlab/gitlab-ce:latest'
   restart: always
   environment:
